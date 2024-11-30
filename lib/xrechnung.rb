@@ -156,7 +156,7 @@ module Xrechnung
     #
     # @!attribute tax_currency_code
     #   @return [String]
-    member :tax_currency_code, type: String, default: "EUR"
+    member :tax_currency_code, type: String
 
     # Buyer reference BT-10
     #
@@ -276,7 +276,11 @@ module Xrechnung
 
         xml.cbc :TaxPointDate, tax_point_date unless tax_point_date.nil?
         xml.cbc :DocumentCurrencyCode, document_currency_code
-        xml.cbc :TaxCurrencyCode, tax_currency_code
+
+        unless tax_currency_code.nil?
+          xml.cbc :TaxCurrencyCode, tax_currency_code
+        end
+
         xml.cbc :BuyerReference, buyer_reference
 
         invoice_period&.to_xml(xml) unless self.class.members[:invoice_period].optional && invoice_period.nil?
