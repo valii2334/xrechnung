@@ -42,13 +42,14 @@ module Xrechnung
       xml.cac root_tag_name do
         xml.cbc :ID, id
         xml.cbc :Percent, format("%.2f", percent)
-        xml.cac :TaxScheme do
-          xml.cbc :ID, tax_scheme_id
-        end
 
         unless tax_exemption_reason_code.nil?
           xml.cbc :TaxExemptionReasonCode, tax_exemption_reason_code
           xml.cbc :TaxExemptionReason, tax_exemption_reason
+        end
+
+        xml.cac :TaxScheme do
+          xml.cbc :ID, tax_scheme_id
         end
       end
     end

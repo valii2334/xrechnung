@@ -31,14 +31,15 @@ module Xrechnung
     include MemberContainer
 
     # Default customization specs
-    DEFAULT_CUSTOMIZATION_ID = "urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3"
-
+    DEFAULT_CUSTOMIZATION_ID = "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0"
+    PROFILE_ID               = "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"
     # Document customization identifier
     #
     # @!attribute customization_id
     #   @return [String]
     member :customization_id, type: String, default: DEFAULT_CUSTOMIZATION_ID
 
+    member :profile_id, type: String, default: PROFILE_ID
     # Invoice number BT-1
     #
     # Eine eindeutige Kennung der Rechnung, die diese im System des Verkäufers identifiziert.
@@ -265,6 +266,7 @@ module Xrechnung
         "xmlns:xsi"          => "http://www.w3.org/2001/XMLSchema-instance",
         "xsi:schemaLocation" => "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd" do
         xml.cbc :CustomizationID, customization_id
+        xml.cbc :ProfileID, profile_id
         xml.cbc :ID, id
         xml.cbc :IssueDate, issue_date
         xml.cbc :DueDate, due_date
@@ -274,36 +276,42 @@ module Xrechnung
           xml.cbc :Note, note
         end
 
-        xml.cbc :TaxPointDate, tax_point_date unless tax_point_date.nil?
+        xml.cbc :TaxPointDate, tax_point_date unless tax_point_date.blank?
         xml.cbc :DocumentCurrencyCode, document_currency_code
 
-        unless tax_currency_code.nil?
+        unless tax_currency_code.blank?
           xml.cbc :TaxCurrencyCode, tax_currency_code
         end
 
         xml.cbc :BuyerReference, buyer_reference
 
-        invoice_period&.to_xml(xml) unless self.class.members[:invoice_period].optional && invoice_period.nil?
+        invoice_period&.to_xml(xml) unless self.class.members[:invoice_period].optional && invoice_period.blank?
 
-        xml.cac :OrderReference do
-          xml.cbc :ID, purchase_order_reference
-          unless self.class.members[:sales_order_reference].optional && sales_order_reference.nil?
-            xml.cbc :SalesOrderID, sales_order_reference
+        unless purchase_order_reference.blank?
+          xml.cac :OrderReference do
+            xml.cbc :ID, purchase_order_reference
+            unless self.class.members[:sales_order_reference].optional && sales_order_reference.blank?
+              xml.cbc :SalesOrderID, sales_order_reference
+            end
           end
         end
 
-        unless self.class.members[:billing_reference].optional && billing_reference.nil?
+        unless self.class.members[:billing_reference].optional && billing_reference.blank?
           xml.cac :BillingReference do
             billing_reference&.to_xml(xml)
           end
         end
 
-        xml.cac :ContractDocumentReference do
-          xml.cbc :ID, contract_document_reference_id
+        unless contract_document_reference_id.blank?
+          xml.cac :ContractDocumentReference do
+            xml.cbc :ID, contract_document_reference_id
+          end
         end
 
-        xml.cac :ProjectReference do
-          xml.cbc :ID, project_reference_id
+        unless project_reference_id.blank?
+          xml.cac :ProjectReference do
+            xml.cbc :ID, project_reference_id
+          end
         end
 
         xml.cac :AccountingSupplierParty do
@@ -314,7 +322,7 @@ module Xrechnung
           accounting_customer_party&.to_xml(xml)
         end
 
-        unless self.class.members[:tax_representative_party].optional && tax_representative_party.nil?
+        unless self.class.members[:tax_representative_party].optional && tax_representative_party.blank?
           xml.cac :TaxRepresentativeParty do
             tax_representative_party&.to_xml(xml)
           end
@@ -323,9 +331,11 @@ module Xrechnung
         xml.cac :PaymentMeans do
           payment_means&.to_xml(xml)
         end
-
-        xml.cac :PaymentTerms do
-          xml.cbc :Note, payment_terms_note
+      
+        unless payment_terms_note.blank?
+          xml.cac :PaymentTerms do
+            xml.cbc :Note, payment_terms_note
+          end
         end
 
         xml.cac :TaxTotal do
