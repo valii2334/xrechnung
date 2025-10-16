@@ -86,6 +86,9 @@ RSpec.describe Xrechnung do
 
     doc.invoice_lines << build_invoice_line
 
+    doc.delivery = Xrechnung::Delivery.new
+    doc.delivery.actual_delivery_date = Date.new(2021, 4, 1)
+
     doc.invoice_lines << Xrechnung::InvoiceLine.new(
       id:                    1,
       invoice_period:        Xrechnung::InvoicePeriod.new(start_date: Date.new(2021, 4, 7), end_date: Date.new(2021, 4, 13)),

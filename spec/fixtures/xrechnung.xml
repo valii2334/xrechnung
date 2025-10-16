@@ -153,6 +153,9 @@
     <cbc:PayableRoundingAmount currencyID="EUR">0.00</cbc:PayableRoundingAmount>
     <cbc:PayableAmount currencyID="EUR">2877.09</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
+  <cac:Delivery>
+    <cbc:ActualDeliveryDate>2021-04-01</cbc:ActualDeliveryDate>
+  </cac:Delivery>
   <cac:InvoiceLine>
     <cbc:ID>0</cbc:ID>
     <cbc:InvoicedQuantity unitCode="XPP">1.00</cbc:InvoicedQuantity>

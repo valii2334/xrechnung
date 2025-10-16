@@ -21,6 +21,7 @@ require "xrechnung/allowance_charge"
 require "xrechnung/price"
 require "xrechnung/invoice_line"
 require "xrechnung/invoice_document_reference"
+require "xrechnung/delivery"
 require "xrechnung/invoice_period"
 require "builder"
 
@@ -245,6 +246,9 @@ module Xrechnung
     #   @return [Xrechnung::LegalMonetaryTotal]
     member :legal_monetary_total, type: Xrechnung::LegalMonetaryTotal
 
+    # https://docs.peppol.eu/poacc/billing/3.0/syntax/ubl-invoice/cac-Delivery/
+    member :delivery, type: Xrechnung::Delivery
+
     # INVOICE LINE BG-25
     #
     # Eine Gruppe von Informationselementen, die Informationen über einzelne
@@ -330,6 +334,10 @@ module Xrechnung
 
         xml.cac :LegalMonetaryTotal do
           legal_monetary_total&.to_xml(xml)
+        end
+
+        unless delivery.nil?
+          delivery&.to_xml(xml)
         end
 
         invoice_lines.each do |invoice_line|
