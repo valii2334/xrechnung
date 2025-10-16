@@ -26,6 +26,8 @@ module Xrechnung
     #   @return [Xrechnung::Contact]
     member :contact, type: Xrechnung::Contact
 
+    member :supplier_party_electronic_address, type: String
+
     attr_accessor :nested
 
     def initialize(nested: true, **kwargs)
@@ -37,6 +39,7 @@ module Xrechnung
     def to_xml(xml)
       if nested
         xml.cac :Party do
+          xml.cbc :EndpointID, supplier_party_electronic_address, schemeID: 'EM'
           party_body(xml)
         end
       else
